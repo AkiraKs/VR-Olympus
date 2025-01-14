@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title>Système Solaire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <img id="sunTexture" src="./assets/sun.jpg">
+        <img id="mercuryTexture" src="./assets/mercury.jpg">
+        <img id="venusTexture" src="./assets/venus.jpg">
+        <img id="earthTexture" src="./assets/earth.jpg">
+        <img id="marsTexture" src="./assets/mars.jpg">
+        <img id="jupiterTexture" src="./assets/jupiter.jpg">
+        <img id="saturnTexture" src="./assets/saturn.jpg">
+        <img id="uranusTexture" src="./assets/uranus.jpg">
+        <img id="neptuneTexture" src="./assets/neptune.jpg">
+        <img id="skyTexture" src="./assets/sky.jpg">
+        <a-asset-item id="planet" src="./assets/planet.glb"></a-asset-item>
+      </a-assets>
+
+      <a-sphere position="0 1.75 -5" radius="1.5" material="src: #sunTexture" animation="property: rotation; to: 0 360 0; dur: 25000; loop: true; easing: linear"></a-sphere>
+
+      <a-entity id="planetOrbit" rotation="0 0 0" animation="property: rotation; to: 0 360 0; dur: 10000; loop: true; easing: linear">
+        <a-entity gltf-model="#planet" scale="0.1 0.1 0.1" position="5 0 0"></a-entity>
+      </a-entity>
+    
+      <a-sphere position="2 1.75 -5" radius="0.2" material="src: #mercuryTexture" animation="property: rotation; to: 0 360 0; dur: 88000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="3 1.75 -5" radius="0.4" material="src: #venusTexture" animation="property: rotation; to: 0 360 0; dur: 225000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="4 1.75 -5" radius="0.5" material="src: #earthTexture" animation="property: rotation; to: 0 360 0; dur: 365000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="5 1.75 -5" radius="0.3" material="src: #marsTexture" animation="property: rotation; to: 0 360 0; dur: 687000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="7 1.75 -5" radius="0.9" material="src: #jupiterTexture" animation="property: rotation; to: 0 360 0; dur: 4333000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="9 1.75 -5" radius="0.8" material="src: #saturnTexture" animation="property: rotation; to: 0 360 0; dur: 10759000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="11 1.75 -5" radius="0.6" material="src: #uranusTexture" animation="property: rotation; to: 0 360 0; dur: 30685000; loop: true; easing: linear"></a-sphere>
+
+      <a-sphere position="13 1.75 -5" radius="0.6" material="src: #neptuneTexture" animation="property: rotation; to: 0 360 0; dur: 60190000; loop: true; easing: linear"></a-sphere>
+
+      <a-sky src="#skyTexture"></a-sky>
+      <a-camera position="0 2 0"></a-camera>
+    </a-scene>
+  </body>
+</html>
