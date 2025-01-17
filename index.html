@@ -1,5 +1,9 @@
 <head>
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls/dist/aframe-blink-controls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+  <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
 </head>
 <body>
   <a-scene fog="type: exponential; color: #f5efe6; density: 0.05">
@@ -16,7 +20,6 @@
       <a-asset-item id="true" src="./elements/True.glb"></a-asset-item>
       <a-asset-item id="Magic" src="./elements/Magic.glb"></a-asset-item>
       <a-asset-item id="Clouds" src="./elements/Clouds.glb"></a-asset-item>
-
     </a-assets>
 
     <!-- Lumières -->
@@ -39,7 +42,6 @@
     <a-entity gltf-model="#pillar" scale="0.5 0.5 0.5" position="3 1.1 4"></a-entity>
     <a-entity gltf-model="#pillar" scale="0.5 0.5 0.5" position="-3.2 1.1 -4"></a-entity>
     <a-entity gltf-model="#pillar" scale="0.5 0.5 0.5" position="-3 1.1 4.1"></a-entity>
-
 
     <!-- Arbres -->
     <a-entity gltf-model="#tree" position="1 0 -3" scale="0.01 0.01 0.01"></a-entity>
@@ -87,7 +89,114 @@
     <!-- Ciel -->
     <a-sky src="#skyTexture"></a-sky>
 
+    <!-- Exo -->
     <!-- Caméra -->
-    <a-camera position="0 2 10"></a-camera>
+    <a-entity id="rig" position="0 0 0">
+      <a-entity camera look-controls wasd-controls position="0 1.6 0">
+        <a-cursor raycaster="objects: .clickable; far: 10; showLine: true"></a-cursor>
+      </a-entity>
+      <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 20; showLine: true"></a-entity>
+      <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 20; showLine: true"></a-entity>
+    </a-entity>
+
+    <!-- Environnement -->
+    <a-entity environment="preset: forest; dressingAmount: 500"></a-entity>
+
+    <!-- Cube -->
+    <a-entity geometry="primitive: box" position="0 1.6 4"></a-entity>
+
+    <!-- Boîtes interactives -->
+    <a-box cursor-listener position="3 2 -5" rotation="0 45 45" scale-on-mouseenter></a-box>
+    <a-box cursor-listener position="0 2 -5" rotation="0 45 45" scale-on-mouseenter></a-box>
+    <a-box cursor-listener position="-3 2 -5" rotation="0 45 45" scale-on-mouseenter></a-box>
+
+    <!-- Entités interactives -->
+    <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" event-set__enter="_event: mouseenter; color: #8FF7FF" event-set__leave="_event: mouseleave; color: #4CC3D9"></a-box>
+    <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" event-set__down="_event: mousedown; scale: 1.2 1.2 1.2" event-set__up="_event: mouseup; scale: 1 1 1" event-set__leave="_event: mouseleave; scale: 1 1 1"></a-sphere>
+    <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true" event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false">
+      <a-text id="cylinderText" value="This is a cylinder" align="center" color="#FFF" visible="false" position="0 -0.55 0.55" geometry="primitive: plane; width: 1.75" material="color: #333"></a-text>
+    </a-cylinder>
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" event-set__down="_event: mousedown; material.wireframe: true" event-set__up="_event: mouseup; material.wireframe: false" event-set__leave="_event: moulseleave; material.wireframe: false"></a-plane>
+
+    <!-- Génération de cubes -->
+    <a-entity generate-cubes></a-entity>
+
+    <!-- Boîte rotative -->
+    <a-entity class="clickable" id="rotating-box" geometry="primitive: box" position="0 2 -5" material="color: blue" rotation="0 0 0" interactable></a-entity>
+
+    <!-- Composants personnalisés -->
+    <script>
+      AFRAME.registerComponent("cursor-listener", {
+        init: function () {
+          var lastIndex = -1;
+          var COLORS = ["red", "green", "blue"];
+          this.el.addEventListener("click", function (evt) {
+            lastIndex = (lastIndex + 1) % COLORS.length;
+            this.setAttribute("material", "color", COLORS[lastIndex]);
+            console.log("I was clicked at: ", evt.detail.intersection.point);
+          });
+        },
+      });
+
+      AFRAME.registerComponent("scale-on-mouseenter", {
+        init: function () {
+          const el = this.el;
+          this.el.addEventListener("mouseenter", () => {
+            el.setAttribute("color", "#E75A87");
+            console.log(el);
+          });
+          this.el.addEventListener("mouseleave", () => {
+            el.setAttribute("color", "#4CC3D9");
+          });
+        },
+      });
+
+      AFRAME.registerComponent("generate-cubes", {
+        init: function () {
+          const cube = document.createElement("a-box");
+          cube.setAttribute("position", {
+            x: Math.random() * 20 - 10,
+            y: Math.random() * 20,
+            z: Math.random() * 20 - 10,
+          });
+          cube.setAttribute(
+            "color",
+            `#${Math.floor(Math.random() * 16777215).toString(16)}`
+          );
+          cube.setAttribute("class", "clickable");
+          cube.setAttribute("interactable", "");
+          this.el.appendChild(cube);
+        },
+      });
+
+      AFRAME.registerComponent("interactable", {
+        init: function () {
+          this.el.addEventListener("mouseenter", () => {
+            this.el.setAttribute("material", "color", "red");
+          });
+
+          this.el.addEventListener("mouseleave", () => {
+            this.el.setAttribute("material", "color", "blue");
+          });
+
+          this.el.addEventListener("click", () => {
+            let rotation = this.el.getAttribute("rotation");
+            rotation.y += 45;
+            this.el.setAttribute("rotation", rotation);
+          });
+        },
+      });
+
+      AFRAME.registerComponent("anim", {
+        schema: {
+          speed: { type: "number", default: 1 },
+        },
+        tick: function (time, timeDelta) {
+          let rotation = this.el.getAttribute("rotation");
+          rotation.y += this.data.speed * (timeDelta / 1000);
+          this.el.setAttribute("rotation", rotation);
+        },
+      });
+    </script>
   </a-scene>
 </body>
